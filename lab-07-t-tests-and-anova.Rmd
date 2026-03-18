@@ -93,7 +93,6 @@ df <- df %>%
 
 Select:
 - one **year**
-- one **day of year**
 - one **numeric variable**
 
 Examples:
@@ -104,13 +103,13 @@ Examples:
 
 ```{r choose_one_sample, echo=TRUE, eval=FALSE}
 target_year <- ___
-target_doy  <- ___
 target_var  <- "___"
 
-day_data <- df %>%
-  filter(year_local == target_year, doy == target_doy)
+sample_data <- df %>%
+  filter(year_local == target_year) %>% 
+  slice_sample(n = ___)
 
-x <- day_data[[target_var]]
+x <- sample_data[[target_var]]
 
 mean(x, na.rm = TRUE); sd(x, na.rm = TRUE); length(x)
 ```
@@ -187,22 +186,19 @@ t.test(x, mu = mu0)
 
 # Part II — Two-sample t-test
 
-## 6) Compare the same variable across two days
+## 6) Compare the same variable across two day ranges
 
 Choose:
 - the **same variable**
-- two different **days in 2023**
+- two different **day ranges in 2023**
 
 ```{r choose_two_sample, echo=TRUE, eval=FALSE}
-day1 <- ___
-day2 <- ___
-
 x1 <- df %>%
-  filter(year_local == 2023, doy == day1) %>%
+  filter(year_local == 2023, doy > ___ & doy < ___) %>%
   pull(target_var)
 
 x2 <- df %>%
-  filter(year_local == 2023, doy == day2) %>%
+  filter(year_local == 2023, doy > ___ & doy < ___) %>%
   pull(target_var)
 
 mean(x1, na.rm = TRUE); sd(x1, na.rm = TRUE); length(x1)
@@ -275,8 +271,8 @@ t.test(x1, x2)
 
 ```{r two_sample_plot, echo=TRUE, eval=FALSE}
 plot_df <- bind_rows(
-  tibble(group = paste0("DOY_", day1), value = x1),
-  tibble(group = paste0("DOY_", day2), value = x2)
+  tibble(group = paste0("DOY_", day_range1), value = x1),
+  tibble(group = paste0("DOY_", day_range2), value = x2)
 )
 
 ggplot(plot_df, aes(x = group, y = value, fill = group)) +
@@ -295,20 +291,18 @@ ggplot(plot_df, aes(x = group, y = value, fill = group)) +
 
 # Part III — Paired t-test
 
-## 11) Compare the same day across two years
+## 11) Compare the same days across two years
 
 Choose one DOY and compare **2022 vs 2023** for the same variable.
 
 ```{r paired_setup, echo=TRUE, eval=FALSE}
-target_doy <- ___
-
 x1 <- df %>%
-  filter(year_local == 2022, doy == target_doy) %>%
+  filter(year_local == 2022, doy > ___ & doy < ___) %>%
   arrange(date) %>%
   pull(target_var)
 
 x2 <- df %>%
-  filter(year_local == 2023, doy == target_doy) %>%
+  filter(year_local == 2023, doy > ___ & doy < ___) %>%
   arrange(date) %>%
   pull(target_var)
 
