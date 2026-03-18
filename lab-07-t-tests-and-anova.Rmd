@@ -12,7 +12,7 @@ output:
     code_folding: hide
     df_print: paged
 editor_options:
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -68,7 +68,7 @@ By the end of this lab, you should be able to:
 
 df <- read_csv("data/us-ams-simple.csv", na = c("-9999")) %>%
   clean_names() %>%
-  filter(year_local %in% c(___, ___))
+  filter(year_local %in% c(2022, 2023))
 
 glimpse(df)
 ```
