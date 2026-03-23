@@ -102,12 +102,12 @@ Examples:
 - `fc`
 
 ```{r choose_one_sample, echo=TRUE, eval=FALSE}
-target_year <- ___
-target_var  <- "___"
+target_year <- 2023
+target_var  <- "ta"
 
 sample_data <- df %>%
   filter(year_local == target_year) %>% 
-  slice_sample(n = ___)
+  slice_sample(n = 200)
 
 x <- sample_data[[target_var]]
 
@@ -115,7 +115,7 @@ mean(x, na.rm = TRUE); sd(x, na.rm = TRUE); length(x)
 ```
 
 > What variable and day did you choose, and why?
-
+I chose air temperature in 2023 to continue the explore this variable from the previous labs.
 ---
 
 ## 2) State a null hypothesis
@@ -128,9 +128,9 @@ Examples:
 
 Fill in:
 
-> $H_0$: `___`
+> $H_0$: `The mean temperature on this day is 13 °C`
 
-> $H_A$: `___`
+> $H_A$: `The mean temperature on this day is greater than 13 °C`
 
 ---
 
@@ -141,7 +141,7 @@ Use:
 $t = (\bar{x} - \mu_0) / (s / \sqrt{n})$
 
 ```{r one_sample_manual, echo=TRUE, eval=FALSE}
-mu0 <- ___
+mu0 <- 13
 
 xbar <- mean(x, na.rm = TRUE)
 s <- sd(x, na.rm = TRUE)
@@ -156,7 +156,7 @@ t_stat
 ## 4) Compute the p-value and degrees of freedom
 
 ```{r one_sample_pvalue, echo=TRUE, eval=FALSE}
-df_t <- ___
+df_t <- x - 1
 
 p_value <- 2 * pt(-abs(t_stat), df = df_t)
 
@@ -171,6 +171,8 @@ tibble(
 ```
 
 > What does the p-value suggest about your null hypothesis?
+The p-value is about 0.9, which is greater than 0.05 significance level, therefore failing to reject the null hypothesis. 
+
 
 ---
 
