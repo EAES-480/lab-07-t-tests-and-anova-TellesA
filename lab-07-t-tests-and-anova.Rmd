@@ -83,6 +83,8 @@ df <- df %>%
     date = as.Date(floor(doy) - 1, origin = paste0(year_local, "-01-01")),
     month = month(date, label = TRUE, abbr = TRUE)
   )
+head(df$doy)
+tail(df$doy)
 ```
 
 ---
@@ -183,7 +185,7 @@ t.test(x, mu = mu0)
 ```
 
 > Does the `t.test()` output agree with your manual calculation? If not, why might that be?
-
+The t-test output does not have the same t-statistic as the manual calcualtion, however, it does share the same p-value and mean. The manual calculation has a t-value of 1.36, while this t-test is 0.12. This may be because of variations in the input data when calculating the t-stat. 
 ---
 
 # Part II — Two-sample t-test
@@ -196,11 +198,11 @@ Choose:
 
 ```{r choose_two_sample, echo=TRUE, eval=FALSE}
 x1 <- df %>%
-  filter(year_local == 2023, doy > ___ & doy < ___) %>%
+  filter(year_local == 2023, doy > 144 & doy < 244) %>%
   pull(target_var)
 
 x2 <- df %>%
-  filter(year_local == 2023, doy > ___ & doy < ___) %>%
+  filter(year_local == 2023, doy > 244 & doy < 354) %>%
   pull(target_var)
 
 mean(x1, na.rm = TRUE); sd(x1, na.rm = TRUE); length(x1)
@@ -208,7 +210,7 @@ mean(x2, na.rm = TRUE); sd(x2, na.rm = TRUE); length(x2)
 ```
 
 > Why did you choose these two days?
-
+I wanted to see the full range of the available days which goes from about 144 to 354. 
 ---
 
 ## 7) Summarize the difference in means
@@ -256,8 +258,7 @@ tibble(
 ```
 
 > What does the sign of `mean_diff` mean? What does the p-value mean?
-
----
+The sign of the mean_diff is positive meaning the first mean calculated is higher than the second mean. The p-value is 0 which is evidence against the null hypothesis. 
 
 ## 9) Compare with `t.test()`
 
@@ -266,17 +267,18 @@ t.test(x1, x2)
 ```
 
 > Does the automated t-test agree with your manual result?
-
+The automated t-test does agree with the manual result, with both t-statistics being 77.5. 
 ---
 
 ## 10) Visualize the two groups
 
 ```{r two_sample_plot, echo=TRUE, eval=FALSE}
 plot_df <- bind_rows(
-  tibble(group = paste0("DOY_", day_range1), value = x1),
-  tibble(group = paste0("DOY_", day_range2), value = x2)
+  tibble(group = paste0("DOY_"), value = x1),
+  tibble(group = paste0("DOY_"), value = x2)
 )
-
+#group = paste0("DOY_", day_range1)
+#group = paste0("DOY_", day_range2),
 ggplot(plot_df, aes(x = group, y = value, fill = group)) +
   geom_boxplot(alpha = 0.8) +
   theme_classic(base_size = 18) +
@@ -288,7 +290,7 @@ ggplot(plot_df, aes(x = group, y = value, fill = group)) +
 ```
 
 > Does the plot match your statistical conclusion?
-
+This plot does match the statistical conclusion because it shows a small spread and a large outlier that may contribute to the randomness that was concluded. 
 ---
 
 # Part III — Paired t-test
@@ -299,12 +301,12 @@ Choose one DOY and compare **2022 vs 2023** for the same variable.
 
 ```{r paired_setup, echo=TRUE, eval=FALSE}
 x1 <- df %>%
-  filter(year_local == 2022, doy > ___ & doy < ___) %>%
+  filter(year_local == 2022, doy > 144 & doy < 244) %>%
   arrange(date) %>%
   pull(target_var)
 
 x2 <- df %>%
-  filter(year_local == 2023, doy > ___ & doy < ___) %>%
+  filter(year_local == 2023, doy > 144 & doy < 244) %>%
   arrange(date) %>%
   pull(target_var)
 
@@ -312,7 +314,7 @@ length(x1); length(x2)
 ```
 
 > Why is this a paired comparison rather than an independent two-sample comparison?
-
+This is paired because it compares the same time frame between the two years. 
 ---
 
 ## 12) Compute paired differences manually
@@ -337,17 +339,17 @@ tibble(
 ```
 
 > What does the sign of `dbar` mean?
-
+The dbar is the mean of the difference of the two variables. A postive dbar means that the values in the x2 are larger than x1 on average.
 ---
 
 ## 13) Compare with `t.test(..., paired = TRUE)`
 
 ```{r paired_ttest, echo=TRUE, eval=FALSE}
-t.test(x1, x2, paired = TRUE)
+t.test(x1, x2, paired = FALSE)
 ```
 
 > How does the paired t-test differ conceptually from the two-sample t-test?
-
+For these two test the p-values are similar but the t-statistics are not. Conceptually, the paired t-test samples are related in some way while the two-sample t-test are independent of eachother.
 ---
 
 # Part IV — ANOVA
@@ -365,8 +367,8 @@ df_anova <- df %>%
   filter(!is.na(ta)) %>%
   mutate(
     month_group = case_when(
-      month %in% c(___, ___, ___) ~ "Summer",
-      month %in% c(___, ___, ___) ~ "Winter",
+      month %in% c(20, 22, 23) ~ "Summer",
+      month %in% c(10, 11, 13) ~ "Winter",
       TRUE ~ "Other"
     )
   )
@@ -390,7 +392,7 @@ ggplot(df_anova, aes(x = month_group, y = ta, fill = month_group)) +
 ```
 
 > Do the groups look different enough that ANOVA might detect a difference?
-
+Based on this boxplot, the groups do not show much of a difference between eachother, so the ANOVA might not detect a difference. 
 ---
 
 ## 16) Compute ANOVA components manually
@@ -437,7 +439,7 @@ tibble(
 ```
 
 > In your own words, what do `ss_between` and `ss_within` represent?
-
+The ss_between represents the mean differences between the groups while the ss_within are the differences within the groups. 
 ---
 
 ## 17) Compare with `aov()`
@@ -445,10 +447,11 @@ tibble(
 ```{r run_anova, echo=TRUE, eval=FALSE}
 model <- aov(ta ~ month_group, data = df_anova)
 summary(model)
+
 ```
 
 > What does the ANOVA p-value tell you? Does it tell you which groups differ?
-
+The ANOVA did not compute, perhaps because the ANOVA could not differ between the varying groups. 
 ---
 
 ## 18) Final reflection
@@ -460,8 +463,8 @@ Answer in **5–7 sentences**:
 - How is ANOVA a generalization of the t-test?
 - What stayed the same across all these tests?
 
-> *Write your answer here.*
-
+> 
+A one-sample t-test creates an estimate for a claim about a population parameter, while a two-sample t-test comapares two different population parameter estimates. A paired t-test is special because the  two variables are related to eachother in someway, being dependent of eachother. An ANOVA is a generalization of the t-test because it can compare more than two groups, which means is assumes more in its calculations. Across all four tests, the means stayed about the same. This is likely because they are pulling from the same sample.  
 ---
 
 # Submission
