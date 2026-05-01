@@ -15,6 +15,8 @@ editor_options:
   chunk_output_type: inline
 ---
 
+GRADE GM: 8.75/10 - Some good effort and code structure, but several code errors (wrong df, broken plot, incorrect ANOVA grouping), one-sided hypothesis, and vague/short interpretations. Conceptual understanding is present but needs more precision and attention to code details.
+
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(lubridate)
@@ -134,6 +136,8 @@ Fill in:
 
 > $H_A$: `The mean temperature on this day is greater than 13 °C`
 
+> GM: -0.25 - One-sided alternative hypothesis without justification.
+
 ---
 
 ## 3) Compute the one-sample t-statistic manually
@@ -174,6 +178,8 @@ tibble(
 
 > What does the p-value suggest about your null hypothesis?
 The p-value is about 0.9, which is greater than 0.05 significance level, therefore failing to reject the null hypothesis. 
+
+> GM: -0.5 - Major code error: `df_t <- x - 1` is wrong (should be `n-1`). This breaks the manual p-value.
 
 
 ---
@@ -291,6 +297,9 @@ ggplot(plot_df, aes(x = group, y = value, fill = group)) +
 
 > Does the plot match your statistical conclusion?
 This plot does match the statistical conclusion because it shows a small spread and a large outlier that may contribute to the randomness that was concluded. 
+
+> GM: -0.25 - Plot code is broken (incomplete `labs()` and missing day_range variables). Interpretation is okay but plot doesn't render properly.
+
 ---
 
 # Part III — Paired t-test
@@ -452,6 +461,9 @@ summary(model)
 
 > What does the ANOVA p-value tell you? Does it tell you which groups differ?
 The ANOVA did not compute, perhaps because the ANOVA could not differ between the varying groups. 
+
+> GM: -0.5 - ANOVA grouping uses wrong month numbers (`c(20,22,23)` etc.) — this is invalid. Manual ANOVA likely failed or is incorrect.
+
 ---
 
 ## 18) Final reflection
@@ -465,6 +477,9 @@ Answer in **5–7 sentences**:
 
 > 
 A one-sample t-test creates an estimate for a claim about a population parameter, while a two-sample t-test comapares two different population parameter estimates. A paired t-test is special because the  two variables are related to eachother in someway, being dependent of eachother. An ANOVA is a generalization of the t-test because it can compare more than two groups, which means is assumes more in its calculations. Across all four tests, the means stayed about the same. This is likely because they are pulling from the same sample.  
+
+> GM: -0.25 - Mostly correct but some vagueness (“means stayed about the same”) and minor inaccuracies. In a paired t-test the two samples are paired in some way, such as the same measurement of the same subject on different days.
+
 ---
 
 # Submission
